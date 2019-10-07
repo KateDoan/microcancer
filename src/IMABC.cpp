@@ -1,6 +1,9 @@
+// [[Rcpp::interfaces(r, cpp)]]
+// [[Rcpp::depends("RcppArmadillo")]]
 #include <RcppArmadillo.h>
 #include "util_IMABC.h"
 using namespace Rcpp;
+
 
 class IMABC {
 public:
@@ -146,7 +149,6 @@ public:
         Rcout << "number of selected points: " << n_selected_pts << "\n";
     }
 
-    // [[Rcpp::depends("RcppArmadillo")]]
     // Calculate ESS
     void step4(){
         //double curr_d_prior, curr_dmixture;

@@ -14,3 +14,7 @@ dmvnrm_arma <- function(x, mean, sigma, logd = FALSE) {
     .Call(`_microcancer_dmvnrm_arma`, x, mean, sigma, logd)
 }
 
+# Register entry points for exported C++ functions
+methods::setLoadAction(function(ns) {
+    .Call('_microcancer_RcppExport_registerCCallable', PACKAGE = 'microcancer')
+})

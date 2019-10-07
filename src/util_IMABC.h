@@ -1,7 +1,6 @@
+// [[Rcpp::depends("RcppArmadillo")]]
 #include <RcppArmadillo.h>
 using namespace Rcpp;
-
-// [[Rcpp::depends("RcppArmadillo")]]
 
 // Struct declarations
 struct Point{
