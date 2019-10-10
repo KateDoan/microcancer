@@ -3,7 +3,7 @@
 #include <RcppArmadillo.h>
 #include "util_IMABC.h"
 using namespace Rcpp;
-
+bool is_trial = true;
 
 class IMABC {
 public:
@@ -26,12 +26,28 @@ public:
     };
 
     double d_prior(std::vector<double> x){
-        return 1.0/(N0*100);
+        double d_prior_val = R::punif(x[0], 70, 80, false, false)
+                        + R::punif(x[1], 0, 1, false, false)
+                        + R::punif(x[2], 0, 20, false, false)
+                        + R::punif(x[3], 0, 4.5, false, false)
+                        + R::punif(x[4], 0, 2, false, false)
+                        + R::punif(x[5], 0, 30, false, false)
+                        + R::punif(x[6], 0, 0.5, false, false)
+                        + R::punif(x[7], 0, 3.5, false, false)
+                        + R::punif(x[8], 0, 2.0, false, false)
+                        + R::punif(x[9], 0, 3.5, false, false)
+                        + R::punif(x[10], 0, 2.0, false, false);
+
+        return d_prior_val;
     }
 
     // Microsimulation function
     std::vector<double> fsim(std::vector<double> x){
         return x;
+    }
+
+    double var_unif(double a, double b){
+        return (b-a)*(b-a)/12;
     }
 
     void step1(){
@@ -40,9 +56,23 @@ public:
         double min_p, dist2_to_target;
 
         for(int it=0; it<N0; it++){
+            /*
             for(int i=0; i<size_theta; ++i){
                 params[i] = R::rnorm(3, 1);
             }
+            */
+            params[0] = R::runif(70, 80);
+            params[1] = R::runif(0, 1);
+            params[2] = R::runif(0, 20);
+            params[3] = R::runif(0, 4.5);
+            params[4] = R::runif(0, 2);
+            params[5] = R::runif(0, 30);
+            params[6] = R::runif(0, 0.5);
+            params[7] = R::runif(0, 3.5);
+            params[8] = R::runif(0, 2);
+            params[9] = R::runif(0, 3.5);
+            params[10] = R::runif(0, 2);
+
             std::vector<double> curr_sim_res = fsim(params);
             std::vector<double> pval_vec = cal_pval_vec(curr_sim_res, target, target_sd);
             min_p = *(std::min_element(pval_vec.begin(), pval_vec.end()));
@@ -72,7 +102,18 @@ public:
         n_selected_pts = ret.size();
 
         if(!(n_selected_pts > LIM1*size_theta)){
-            sig_mat = NumericMatrix::diag(size_theta, 0.1);
+            sig_mat = NumericMatrix::diag(size_theta, 1);
+            sig_mat(0, 0) = var_unif(70, 80)/4;
+            sig_mat(1, 1) = var_unif(0, 1)/4;
+            sig_mat(2, 2) = var_unif(0, 20)/4;
+            sig_mat(3, 3) = var_unif(0, 4.5)/4;
+            sig_mat(4, 4) = var_unif(0, 2)/4;
+            sig_mat(5, 5) = var_unif(0, 30)/4;
+            sig_mat(6, 6) = var_unif(0, 0.5)/4;
+            sig_mat(7, 7) = var_unif(0, 3.5)/4;
+            sig_mat(8, 8) = var_unif(0, 2)/4;
+            sig_mat(9, 9) = var_unif(0, 3.5)/4;
+            sig_mat(10, 10) = var_unif(0, 2)/4;
         } else if((n_selected_pts > LIM1*size_theta) && (!(n_selected_pts > LIM2*size_theta))) {
             NumericMatrix param_mat(ret.size(), size_theta);
             for(i=0, it=ret.begin(); it!=ret.end(); it++, i++){
@@ -88,7 +129,8 @@ public:
 
         it_begin=ret.begin();
         it_Nc= ret.size()<Nc ? ret.end() : ret.begin()+Nc;
-        for(it = it_begin; it != it_Nc; it++){
+
+        for(std::vector<Point>::iterator it = it_begin; it < it_Nc; it++){
             m = (*it).params;
             curr_sim_res = fsim(m);
             pval_vec = cal_pval_vec(curr_sim_res, target, target_sd);
@@ -145,8 +187,8 @@ public:
         ret.insert(ret.end(), new_points.begin(), new_points.end());
         n_selected_pts = ret.size();
 
-        Rcout << "running_Nt = " << running_Nt << "\n";
-        Rcout << "number of selected points: " << n_selected_pts << "\n";
+        if(is_trial) Rcout << "running_Nt = " << running_Nt << "\n";
+        if(is_trial) Rcout << "number of selected points: " << n_selected_pts << "\n";
     }
 
     // Calculate ESS
@@ -184,12 +226,12 @@ public:
                 for(int i=0; i<alpha_goal.size(); i++){
                     alpha_vec[i] = std::min(pvals_median[i], alpha_goal[i]);
                 }
-                Rcout << n_selected_pts << "\n";
+                if(is_trial) Rcout << n_selected_pts << "\n";
                 int n_preserved = int(n_selected_pts/4);
                 ret.erase(std::remove_if(ret.begin() + n_preserved, ret.end(), bad_point(alpha_vec)),
                           ret.end());
                 n_selected_pts = ret.size();
-                Rcout << n_selected_pts << "\n";
+                if(is_trial) Rcout << n_selected_pts << "\n";
             } else {
                 step2();
                 step3();
@@ -223,13 +265,13 @@ public:
 //' @export
 //[[Rcpp::export]]
 void create_IMABC(){
-    size_t size_theta = 7;
+    size_t size_theta = 11;
     int N0=1e5, Nc=10, Ngoal=2000, B=1000, LIM1=5, LIM2=25, LIM3=50;
-    std::vector<double>target(size_theta, 3.0);
-    std::vector<double>target_sd(size_theta, 0.5);
+    std::vector<double>target{75, 0.5, 10, 2, 1, 15, 0.25, 1.75, 1, 1.75, 1};
+    std::vector<double>target_sd(size_theta, 2);
     std::vector<double>alpha_start(size_theta, 0.01);
     std::vector<double>alpha_test(size_theta, 0.02);
-    std::vector<double>alpha_goal(size_theta, 0.9);
+    std::vector<double>alpha_goal(size_theta, 0.7);
 
     IMABC my_imabc = IMABC(size_theta,
                            target,
@@ -238,8 +280,8 @@ void create_IMABC(){
                            alpha_goal,
                            N0, Nc, Ngoal, B, LIM1, LIM2, LIM3);
     my_imabc.IMABC_main();
-    Rcout << my_imabc.ESS << "\n";
-    //print_point_vec(my_imabc.ret);
+    Rcout << "ESS = " << my_imabc.ESS << "\n";
+    print_point_vec(my_imabc.ret);
     //write_csv_vpoints(my_imabc.ret, "./output/myparams.csv", size_theta, target.size());
 }
 
