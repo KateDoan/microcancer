@@ -2,6 +2,7 @@
 // [[Rcpp::depends("RcppArmadillo")]]
 #include <RcppArmadillo.h>
 #include "util_IMABC.h"
+#include "sim.h"
 using namespace Rcpp;
 bool is_trial = true;
 
@@ -26,9 +27,9 @@ public:
     };
 
     double d_prior(std::vector<double> x){
-        double d_prior_val = R::punif(x[0], 70, 80, false, false)
+        double d_prior_val = R::punif(x[0], 80, 90, false, false)
                         + R::punif(x[1], 0, 1, false, false)
-                        + R::punif(x[2], 0, 20, false, false)
+                        + R::punif(x[2], 5, 20, false, false)
                         + R::punif(x[3], 0, 4.5, false, false)
                         + R::punif(x[4], 0, 2, false, false)
                         + R::punif(x[5], 0, 30, false, false)
@@ -43,7 +44,8 @@ public:
 
     // Microsimulation function
     std::vector<double> fsim(std::vector<double> x){
-        return x;
+        Sim s(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10]);
+        return s.read_csv_and_schedule_cancer();
     }
 
     double var_unif(double a, double b){
@@ -267,11 +269,16 @@ public:
 void create_IMABC(){
     size_t size_theta = 11;
     int N0=1e5, Nc=10, Ngoal=2000, B=1000, LIM1=5, LIM2=25, LIM3=50;
-    std::vector<double>target{75, 0.5, 10, 2, 1, 15, 0.25, 1.75, 1, 1.75, 1};
-    std::vector<double>target_sd(size_theta, 2);
-    std::vector<double>alpha_start(size_theta, 0.01);
-    std::vector<double>alpha_test(size_theta, 0.02);
-    std::vector<double>alpha_goal(size_theta, 0.7);
+    std::vector<double>target{32000, 33000, 35000, 36000, 36500,
+                              20500, 21500, 23000, 25000, 28000,
+                              250000, 160000, 136000, 136000, 144000};
+    std::vector<double>target_sd(15, 0);
+    for(int i=0; i<target.size(); i++){
+        target_sd[i] = 0.1 * target[i];
+    }
+    std::vector<double>alpha_start(15, 0.01);
+    std::vector<double>alpha_test(15, 0.02);
+    std::vector<double>alpha_goal(15, 0.7);
 
     IMABC my_imabc = IMABC(size_theta,
                            target,
@@ -284,6 +291,14 @@ void create_IMABC(){
     print_point_vec(my_imabc.ret);
     //write_csv_vpoints(my_imabc.ret, "./output/myparams.csv", size_theta, target.size());
 }
+
+//' @export
+//[[Rcpp::export]]
+std::vector<double> check_sim(){
+    Sim s(75.0, 0.35, 10.0, 3.5, 0.5, 5, 0.25, 2.3, 1.0, 2.3, 0.5);
+    return s.read_csv_and_schedule_cancer();
+}
+
 
 
 

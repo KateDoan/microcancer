@@ -41,6 +41,57 @@ RcppExport SEXP _microcancer_create_IMABC() {
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// check_sim
+std::vector<double> check_sim();
+static SEXP _microcancer_check_sim_try() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    rcpp_result_gen = Rcpp::wrap(check_sim());
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _microcancer_check_sim() {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_microcancer_check_sim_try());
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error(CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// ab_work_together
+void ab_work_together();
+RcppExport SEXP _microcancer_ab_work_together() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    ab_work_together();
+    return R_NilValue;
+END_RCPP
+}
+// trial_read_csv_and_schedule_cancer
+void trial_read_csv_and_schedule_cancer();
+RcppExport SEXP _microcancer_trial_read_csv_and_schedule_cancer() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    trial_read_csv_and_schedule_cancer();
+    return R_NilValue;
+END_RCPP
+}
 // squared_dist_vec
 double squared_dist_vec(std::vector<double> v1, std::vector<double> v2);
 RcppExport SEXP _microcancer_squared_dist_vec(SEXP v1SEXP, SEXP v2SEXP) {
@@ -73,6 +124,7 @@ static int _microcancer_RcppExport_validate(const char* sig) {
     static std::set<std::string> signatures;
     if (signatures.empty()) {
         signatures.insert("void(*create_IMABC)()");
+        signatures.insert("std::vector<double>(*check_sim)()");
     }
     return signatures.find(sig) != signatures.end();
 }
@@ -80,12 +132,16 @@ static int _microcancer_RcppExport_validate(const char* sig) {
 // registerCCallable (register entry points for exported C++ functions)
 RcppExport SEXP _microcancer_RcppExport_registerCCallable() { 
     R_RegisterCCallable("microcancer", "_microcancer_create_IMABC", (DL_FUNC)_microcancer_create_IMABC_try);
+    R_RegisterCCallable("microcancer", "_microcancer_check_sim", (DL_FUNC)_microcancer_check_sim_try);
     R_RegisterCCallable("microcancer", "_microcancer_RcppExport_validate", (DL_FUNC)_microcancer_RcppExport_validate);
     return R_NilValue;
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_microcancer_create_IMABC", (DL_FUNC) &_microcancer_create_IMABC, 0},
+    {"_microcancer_check_sim", (DL_FUNC) &_microcancer_check_sim, 0},
+    {"_microcancer_ab_work_together", (DL_FUNC) &_microcancer_ab_work_together, 0},
+    {"_microcancer_trial_read_csv_and_schedule_cancer", (DL_FUNC) &_microcancer_trial_read_csv_and_schedule_cancer, 0},
     {"_microcancer_squared_dist_vec", (DL_FUNC) &_microcancer_squared_dist_vec, 2},
     {"_microcancer_dmvnrm_arma", (DL_FUNC) &_microcancer_dmvnrm_arma, 4},
     {"_microcancer_RcppExport_registerCCallable", (DL_FUNC) &_microcancer_RcppExport_registerCCallable, 0},

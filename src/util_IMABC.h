@@ -1,3 +1,6 @@
+#ifndef UTIL_IMABC_H
+#define UTIL_IMABC_H
+
 // [[Rcpp::depends("RcppArmadillo")]]
 #include <RcppArmadillo.h>
 using namespace Rcpp;
@@ -171,3 +174,5 @@ void write_csv_vpoints(const std::vector<Point> &vpoints, std::string file_name,
 }
 // End of Write to file function
 // End of Helper functions
+
+#endif

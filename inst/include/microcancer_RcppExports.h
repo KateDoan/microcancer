@@ -45,6 +45,27 @@ namespace microcancer {
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
     }
 
+    inline std::vector<double> check_sim() {
+        typedef SEXP(*Ptr_check_sim)();
+        static Ptr_check_sim p_check_sim = NULL;
+        if (p_check_sim == NULL) {
+            validateSignature("std::vector<double>(*check_sim)()");
+            p_check_sim = (Ptr_check_sim)R_GetCCallable("microcancer", "_microcancer_check_sim");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_check_sim();
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<std::vector<double> >(rcpp_result_gen);
+    }
+
 }
 
 #endif // RCPP_microcancer_RCPPEXPORTS_H_GEN_
