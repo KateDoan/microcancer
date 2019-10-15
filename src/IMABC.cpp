@@ -285,11 +285,13 @@ public:
 //[[Rcpp::export]]
 void create_IMABC(){
     size_t size_theta = 11;
-    int N0=200, Nc=2, Ngoal=2, B=100, LIM1=5, LIM2=25, LIM3=50;
+    int N0=200, Nc=50, Ngoal=2, B=200, LIM1=5, LIM2=25, LIM3=50;
     std::vector<double>target{0.0000000, 0.1826170, 0.4079510, 0.6388139, 1.0000000,
                               0.0000000, 0.2883196, 0.4851360, 0.5900274, 1.0000000,
                               0.0000000, 0.2769945, 0.5669079, 0.5669079, 1.0000000};
-    std::vector<double>target_sd(15, 0.1);
+    std::vector<double>target_sd{0.1, 0.11, 0.12, 0.13, 0.14,
+                                 0.1, 0.11, 0.12, 0.13, 0.14,
+                                 1, 1, 1, 1, 1};
     std::vector<double>alpha_start(15, 0.0000001);
     //std::vector<double>alpha_test(15, 0.02);
     std::vector<double>alpha_goal(15, 0.001);
