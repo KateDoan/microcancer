@@ -27,8 +27,8 @@ public:
     };
 
     double d_prior(std::vector<double> x){
-        double d_prior_val = R::punif(x[0], 80, 90, false, false)
-                        + R::punif(x[1], 0, 1, false, false)
+        double d_prior_val = R::punif(x[0], 70, 80, false, false)
+                        + R::punif(x[1], 0, 3, false, false)
                         + R::punif(x[2], 5, 20, false, false)
                         + R::punif(x[3], 0, 4.5, false, false)
                         + R::punif(x[4], 0, 2, false, false)
@@ -64,8 +64,8 @@ public:
             }
             */
             params[0] = R::runif(70, 80);
-            params[1] = R::runif(0, 1);
-            params[2] = R::runif(0, 20);
+            params[1] = R::runif(0, 3);
+            params[2] = R::runif(5, 20);
             params[3] = R::runif(0, 4.5);
             params[4] = R::runif(0, 2);
             params[5] = R::runif(0, 30);
@@ -87,6 +87,7 @@ public:
 
     void step2(){
         std::sort(ret.begin(), ret.end(), better_fit_target());
+        Rcout << "Done step 2\n";
     }
 
     void step3(){
@@ -106,8 +107,8 @@ public:
         if(!(n_selected_pts > LIM1*size_theta)){
             sig_mat = NumericMatrix::diag(size_theta, 1);
             sig_mat(0, 0) = var_unif(70, 80)/4;
-            sig_mat(1, 1) = var_unif(0, 1)/4;
-            sig_mat(2, 2) = var_unif(0, 20)/4;
+            sig_mat(1, 1) = var_unif(0, 3)/4;
+            sig_mat(2, 2) = var_unif(5, 20)/4;
             sig_mat(3, 3) = var_unif(0, 4.5)/4;
             sig_mat(4, 4) = var_unif(0, 2)/4;
             sig_mat(5, 5) = var_unif(0, 30)/4;
@@ -125,7 +126,7 @@ public:
             sig_mat = var(param_mat);
         } else {
         }
-
+        Rcout << "In step 3\n";
         std::vector<double> m, curr_new_vec, pval_vec;
         double min_pval, dist2_to_target;
 
@@ -158,6 +159,8 @@ public:
                 sig_mat = var(param_mat);
             }
 
+            Rcout << "In step 3 2\n";
+
             if(B==1){
                 new_vecs = NumericMatrix(1, size_theta);
                 NumericVector temp = mvrnorm(B, m, sig_mat);
@@ -175,6 +178,20 @@ public:
             for(i=0; i<B; i++){
                 NumericVector temp_new_vec = new_vecs.row(i);
                 curr_new_vec = as<std::vector<double>> (temp_new_vec);
+                if(curr_new_vec[0]<70 || curr_new_vec[0]>80 ||
+                   curr_new_vec[1]<0 || curr_new_vec[1]>3 ||
+                   curr_new_vec[2]<5 || curr_new_vec[2]>20 ||
+                   curr_new_vec[3]<0 || curr_new_vec[3]>4.5 ||
+                   curr_new_vec[4]<0 || curr_new_vec[4]>2 ||
+                   curr_new_vec[5]<0 || curr_new_vec[5]>30 ||
+                   curr_new_vec[6]<0 || curr_new_vec[6]>0.5 ||
+                   curr_new_vec[7]<0 || curr_new_vec[7]>3.5 ||
+                   curr_new_vec[8]<0 || curr_new_vec[8]>2 ||
+                   curr_new_vec[9]<0 || curr_new_vec[9]>3.5 ||
+                   curr_new_vec[10]<0 || curr_new_vec[10]>2
+                ) {
+                    continue;
+                }
                 curr_sim_res = fsim(curr_new_vec);
                 pval_vec = cal_pval_vec(curr_sim_res, target, target_sd);
                 min_pval = *(std::min_element(pval_vec.begin(), pval_vec.end()));
@@ -268,17 +285,14 @@ public:
 //[[Rcpp::export]]
 void create_IMABC(){
     size_t size_theta = 11;
-    int N0=1e5, Nc=10, Ngoal=2000, B=1000, LIM1=5, LIM2=25, LIM3=50;
-    std::vector<double>target{32000, 33000, 35000, 36000, 36500,
-                              20500, 21500, 23000, 25000, 28000,
-                              250000, 160000, 136000, 136000, 144000};
-    std::vector<double>target_sd(15, 0);
-    for(int i=0; i<target.size(); i++){
-        target_sd[i] = 0.1 * target[i];
-    }
-    std::vector<double>alpha_start(15, 0.01);
-    std::vector<double>alpha_test(15, 0.02);
-    std::vector<double>alpha_goal(15, 0.7);
+    int N0=200, Nc=2, Ngoal=2, B=100, LIM1=5, LIM2=25, LIM3=50;
+    std::vector<double>target{0.0000000, 0.1826170, 0.4079510, 0.6388139, 1.0000000,
+                              0.0000000, 0.2883196, 0.4851360, 0.5900274, 1.0000000,
+                              0.0000000, 0.2769945, 0.5669079, 0.5669079, 1.0000000};
+    std::vector<double>target_sd(15, 0.1);
+    std::vector<double>alpha_start(15, 0.0000001);
+    //std::vector<double>alpha_test(15, 0.02);
+    std::vector<double>alpha_goal(15, 0.001);
 
     IMABC my_imabc = IMABC(size_theta,
                            target,
@@ -289,7 +303,7 @@ void create_IMABC(){
     my_imabc.IMABC_main();
     Rcout << "ESS = " << my_imabc.ESS << "\n";
     print_point_vec(my_imabc.ret);
-    //write_csv_vpoints(my_imabc.ret, "./output/myparams.csv", size_theta, target.size());
+    write_csv_vpoints(my_imabc.ret, "myparams.csv", size_theta, target.size());
 }
 
 //' @export

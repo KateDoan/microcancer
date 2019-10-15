@@ -74,24 +74,6 @@ RcppExport SEXP _microcancer_check_sim() {
     UNPROTECT(1);
     return rcpp_result_gen;
 }
-// ab_work_together
-void ab_work_together();
-RcppExport SEXP _microcancer_ab_work_together() {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    ab_work_together();
-    return R_NilValue;
-END_RCPP
-}
-// trial_read_csv_and_schedule_cancer
-void trial_read_csv_and_schedule_cancer();
-RcppExport SEXP _microcancer_trial_read_csv_and_schedule_cancer() {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    trial_read_csv_and_schedule_cancer();
-    return R_NilValue;
-END_RCPP
-}
 // squared_dist_vec
 double squared_dist_vec(std::vector<double> v1, std::vector<double> v2);
 RcppExport SEXP _microcancer_squared_dist_vec(SEXP v1SEXP, SEXP v2SEXP) {
@@ -140,8 +122,6 @@ RcppExport SEXP _microcancer_RcppExport_registerCCallable() {
 static const R_CallMethodDef CallEntries[] = {
     {"_microcancer_create_IMABC", (DL_FUNC) &_microcancer_create_IMABC, 0},
     {"_microcancer_check_sim", (DL_FUNC) &_microcancer_check_sim, 0},
-    {"_microcancer_ab_work_together", (DL_FUNC) &_microcancer_ab_work_together, 0},
-    {"_microcancer_trial_read_csv_and_schedule_cancer", (DL_FUNC) &_microcancer_trial_read_csv_and_schedule_cancer, 0},
     {"_microcancer_squared_dist_vec", (DL_FUNC) &_microcancer_squared_dist_vec, 2},
     {"_microcancer_dmvnrm_arma", (DL_FUNC) &_microcancer_dmvnrm_arma, 4},
     {"_microcancer_RcppExport_registerCCallable", (DL_FUNC) &_microcancer_RcppExport_registerCCallable, 0},

@@ -49,13 +49,13 @@ public:
 
         std::vector<double> num_vec(3*years.size()-6, 0);
         for(int i=1; i<years.size()-1; i++){
-            num_vec[i-1] = map_cancer_incidence[years[i]];
+            num_vec[i-1] = (map_cancer_incidence[years[i]] - 26388.0)/30386.0;
         }
         for(int i=1; i<years.size()-1; i++){
-            num_vec[i+years.size()-3] = map_cancer_death[years[i]];
+            num_vec[i+years.size()-3] = (map_cancer_death[years[i]] - 16563.0)/9486.0;
         }
         for(int i=1; i<years.size()-1; i++){
-            num_vec[i+2*years.size()-5] = map_other_death[years[i]];
+            num_vec[i+2*years.size()-5] = ((double)map_cancer_death[years[i]]/(double)map_other_death[years[i]] - 0.310616)/0.1078237;
         }
         for(auto elem : num_vec){
             Rcout << elem << " ";

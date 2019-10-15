@@ -11,16 +11,6 @@ check_sim <- function() {
     .Call(`_microcancer_check_sim`)
 }
 
-#' @export
-ab_work_together <- function() {
-    invisible(.Call(`_microcancer_ab_work_together`))
-}
-
-#' @export
-trial_read_csv_and_schedule_cancer <- function() {
-    invisible(.Call(`_microcancer_trial_read_csv_and_schedule_cancer`))
-}
-
 squared_dist_vec <- function(v1, v2) {
     .Call(`_microcancer_squared_dist_vec`, v1, v2)
 }
