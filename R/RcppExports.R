@@ -2,21 +2,23 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @export
-create_IMABC <- function() {
-    invisible(.Call(`_microcancer_create_IMABC`))
+create_IMABC <- function(N0, Nc, Ngoal, B, target_sd_in, alpha_start_in, alpha_goal_in) {
+    invisible(.Call(`_microcancer_create_IMABC`, N0, Nc, Ngoal, B, target_sd_in, alpha_start_in, alpha_goal_in))
 }
 
 #' @export
-check_sim <- function() {
-    .Call(`_microcancer_check_sim`)
+check_sim <- function(x) {
+    .Call(`_microcancer_check_sim`, x)
 }
 
-squared_dist_vec <- function(v1, v2) {
-    .Call(`_microcancer_squared_dist_vec`, v1, v2)
+#' @export
+create_IMABC_one_node <- function(N0, Nc, Ngoal, B, target_sd_in, alpha_start_in, alpha_goal_in) {
+    invisible(.Call(`_microcancer_create_IMABC_one_node`, N0, Nc, Ngoal, B, target_sd_in, alpha_start_in, alpha_goal_in))
 }
 
-dmvnrm_arma <- function(x, mean, sigma, logd = FALSE) {
-    .Call(`_microcancer_dmvnrm_arma`, x, mean, sigma, logd)
+#' @export
+check_sim_one_node <- function(x) {
+    .Call(`_microcancer_check_sim_one_node`, x)
 }
 
 # Register entry points for exported C++ functions

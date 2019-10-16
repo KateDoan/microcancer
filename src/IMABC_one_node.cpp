@@ -2,12 +2,12 @@
 // [[Rcpp::depends("RcppArmadillo")]]
 #include <RcppArmadillo.h>
 #include "util_IMABC.h"
-#include "sim.h"
+#include "sim_one_node.h"
 using namespace Rcpp;
 
-class IMABC {
+class IMABC_one_node {
 public:
-    IMABC(size_t size_theta,
+    IMABC_one_node(size_t size_theta,
           std::vector<double> target,
           std::vector<double> target_sd,
           std::vector<double> alpha_start,
@@ -26,24 +26,20 @@ public:
     };
 
     double d_prior(std::vector<double> x){
-        double d_prior_val = R::punif(x[0], 70, 80, false, false)
-                        + R::punif(x[1], 0, 3, false, false)
-                        + R::punif(x[2], 5, 20, false, false)
-                        + R::punif(x[3], 0, 4.5, false, false)
-                        + R::punif(x[4], 0, 2, false, false)
-                        + R::punif(x[5], 0, 30, false, false)
-                        + R::punif(x[6], 0, 0.5, false, false)
-                        + R::punif(x[7], 0, 3.5, false, false)
-                        + R::punif(x[8], 0, 2.0, false, false)
-                        + R::punif(x[9], 0, 3.5, false, false)
-                        + R::punif(x[10], 0, 2.0, false, false);
+        double d_prior_val = R::punif(x[0], 60, 85, false, false)
+                        + R::punif(x[1], 0, 5, false, false)
+                        + R::punif(x[2], 5, 10, false, false)
+                        + R::punif(x[3], 40, 85, false, false)
+                        + R::punif(x[4], 5, 30, false, false)
+                        + R::punif(x[5], 0, 10, false, false)
+                        + R::punif(x[6], 0, 10, false, false);
 
         return d_prior_val;
     }
 
     // Microsimulation function
     std::vector<double> fsim(std::vector<double> x){
-        Sim s(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10]);
+        Sim_one_node s(x[0], x[1], x[2], x[3], x[4], x[5], x[6]);
         return s.read_csv_and_schedule_cancer();
     }
 
@@ -62,17 +58,14 @@ public:
                 params[i] = R::rnorm(3, 1);
             }
             */
-            params[0] = R::runif(70, 80);
-            params[1] = R::runif(0, 3);
-            params[2] = R::runif(5, 20);
-            params[3] = R::runif(0, 4.5);
-            params[4] = R::runif(0, 2);
-            params[5] = R::runif(0, 30);
-            params[6] = R::runif(0, 0.5);
-            params[7] = R::runif(0, 3.5);
-            params[8] = R::runif(0, 2);
-            params[9] = R::runif(0, 3.5);
-            params[10] = R::runif(0, 2);
+            params[0] = R::runif(60, 85);
+            params[1] = R::runif(0, 5);
+            params[2] = R::runif(5, 10);
+            params[3] = R::runif(40, 85);
+            params[4] = R::runif(5, 30);
+            params[5] = R::runif(0, 10);
+            params[6] = R::runif(0, 10);
+
 
             std::vector<double> curr_sim_res = fsim(params);
             std::vector<double> pval_vec = cal_pval_vec(curr_sim_res, target, target_sd);
@@ -105,17 +98,14 @@ public:
 
         if(!(n_selected_pts > LIM1*size_theta)){
             sig_mat = NumericMatrix::diag(size_theta, 1);
-            sig_mat(0, 0) = var_unif(70, 80)/4;
-            sig_mat(1, 1) = var_unif(0, 3)/4;
-            sig_mat(2, 2) = var_unif(5, 20)/4;
-            sig_mat(3, 3) = var_unif(0, 4.5)/4;
-            sig_mat(4, 4) = var_unif(0, 2)/4;
-            sig_mat(5, 5) = var_unif(0, 30)/4;
-            sig_mat(6, 6) = var_unif(0, 0.5)/4;
-            sig_mat(7, 7) = var_unif(0, 3.5)/4;
-            sig_mat(8, 8) = var_unif(0, 2)/4;
-            sig_mat(9, 9) = var_unif(0, 3.5)/4;
-            sig_mat(10, 10) = var_unif(0, 2)/4;
+            sig_mat(0, 0) = var_unif(60, 85)/4;
+            sig_mat(1, 1) = var_unif(0, 5)/4;
+            sig_mat(2, 2) = var_unif(5, 10)/4;
+            sig_mat(3, 3) = var_unif(40, 85)/4;
+            sig_mat(4, 4) = var_unif(5, 30)/4;
+            sig_mat(5, 5) = var_unif(0, 10)/4;
+            sig_mat(6, 6) = var_unif(0, 10)/4;
+
         } else if((n_selected_pts > LIM1*size_theta) && (!(n_selected_pts > LIM2*size_theta))) {
             NumericMatrix param_mat(ret.size(), size_theta);
             for(i=0, it=ret.begin(); it!=ret.end(); it++, i++){
@@ -177,17 +167,13 @@ public:
             for(i=0; i<B; i++){
                 NumericVector temp_new_vec = new_vecs.row(i);
                 curr_new_vec = as<std::vector<double>> (temp_new_vec);
-                if(curr_new_vec[0]<70 || curr_new_vec[0]>80 ||
-                   curr_new_vec[1]<0 || curr_new_vec[1]>3 ||
-                   curr_new_vec[2]<5 || curr_new_vec[2]>20 ||
-                   curr_new_vec[3]<0 || curr_new_vec[3]>4.5 ||
-                   curr_new_vec[4]<0 || curr_new_vec[4]>2 ||
-                   curr_new_vec[5]<0 || curr_new_vec[5]>30 ||
-                   curr_new_vec[6]<0 || curr_new_vec[6]>0.5 ||
-                   curr_new_vec[7]<0 || curr_new_vec[7]>3.5 ||
-                   curr_new_vec[8]<0 || curr_new_vec[8]>2 ||
-                   curr_new_vec[9]<0 || curr_new_vec[9]>3.5 ||
-                   curr_new_vec[10]<0 || curr_new_vec[10]>2
+                if(curr_new_vec[0]<60 || curr_new_vec[0]>85 ||
+                   curr_new_vec[1]<0 || curr_new_vec[1]>5 ||
+                   curr_new_vec[2]<5 || curr_new_vec[2]>10 ||
+                   curr_new_vec[3]<40 || curr_new_vec[3]>85 ||
+                   curr_new_vec[4]<5 || curr_new_vec[4]>30 ||
+                   curr_new_vec[5]<0 || curr_new_vec[5]>10 ||
+                   curr_new_vec[6]<0 || curr_new_vec[6]>10
                 ) {
                     continue;
                 }
@@ -231,7 +217,7 @@ public:
         arma::vec weight = dprior/dmixture;
         ESS = 1.0/arma::accu(arma::pow(weight, 2));
         Rcout << "ESS = " << ESS << "\n";
-        write_csv_vpoints(ret, "myparams" + std::to_string(save_i++) + ".csv", size_theta, target.size());
+        write_csv_vpoints(ret, "myparamsonenode" + std::to_string(save_i++) + ".csv", size_theta, target.size());
     }
 
     void IMABC_main(){
@@ -255,7 +241,7 @@ public:
             } else {
                 step2();
                 step3();
-                write_csv_vpoints(ret, "myparams" + std::to_string(save_i++) + ".csv", size_theta, target.size());
+                write_csv_vpoints(ret, "myparamsonenode" + std::to_string(save_i++) + ".csv", size_theta, target.size());
             }
         }
 
@@ -288,11 +274,11 @@ public:
 
 //' @export
 //[[Rcpp::export]]
-void create_IMABC(int N0, int Nc, int Ngoal, int B,
+void create_IMABC_one_node(int N0, int Nc, int Ngoal, int B,
                   NumericVector target_sd_in,
                   NumericVector alpha_start_in,
                   NumericVector alpha_goal_in){
-    size_t size_theta = 11;
+    size_t size_theta = 7;
     //int N0=1e5, Nc=20, Ngoal=2, B=2000,
     int LIM1=5, LIM2=25, LIM3=50;
     std::vector<double>target{0.0000000, 0.1826170, 0.4079510, 0.6388139, 1.0000000,
@@ -309,7 +295,7 @@ void create_IMABC(int N0, int Nc, int Ngoal, int B,
     std::vector<double>alpha_start = as<std::vector<double>>(alpha_start_in);
     std::vector<double>alpha_goal = as<std::vector<double>>(alpha_goal_in);
 
-    IMABC my_imabc = IMABC(size_theta,
+    IMABC_one_node my_imabc = IMABC_one_node(size_theta,
                            target,
                            target_sd,
                            alpha_start,
@@ -318,13 +304,14 @@ void create_IMABC(int N0, int Nc, int Ngoal, int B,
     my_imabc.IMABC_main();
     Rcout << "ESS = " << my_imabc.ESS << "\n";
     print_point_vec(my_imabc.ret);
-    write_csv_vpoints(my_imabc.ret, "finalparams.csv", size_theta, target.size());
+    write_csv_vpoints(my_imabc.ret, "finalparamsonenode.csv", size_theta, target.size());
 }
 
 //' @export
 // [[Rcpp::export]]
-std::vector<double> check_sim(NumericVector x){
-    Sim s(x(0), x(1), x(2), x(3), x(4), x(5), x(6), x(7), x(8), x(9), x(10));
+std::vector<double> check_sim_one_node(NumericVector x){
+    //Sim s(80, 2, 5.0, 60, 30, 5, 5);
+    Sim_one_node s(x(0), x(1), x(2), x(3), x(4), x(5), x(6));
     return s.read_csv_and_schedule_cancer();
 }
 

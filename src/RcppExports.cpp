@@ -10,18 +10,25 @@
 using namespace Rcpp;
 
 // create_IMABC
-void create_IMABC();
-static SEXP _microcancer_create_IMABC_try() {
+void create_IMABC(int N0, int Nc, int Ngoal, int B, NumericVector target_sd_in, NumericVector alpha_start_in, NumericVector alpha_goal_in);
+static SEXP _microcancer_create_IMABC_try(SEXP N0SEXP, SEXP NcSEXP, SEXP NgoalSEXP, SEXP BSEXP, SEXP target_sd_inSEXP, SEXP alpha_start_inSEXP, SEXP alpha_goal_inSEXP) {
 BEGIN_RCPP
-    create_IMABC();
+    Rcpp::traits::input_parameter< int >::type N0(N0SEXP);
+    Rcpp::traits::input_parameter< int >::type Nc(NcSEXP);
+    Rcpp::traits::input_parameter< int >::type Ngoal(NgoalSEXP);
+    Rcpp::traits::input_parameter< int >::type B(BSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type target_sd_in(target_sd_inSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type alpha_start_in(alpha_start_inSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type alpha_goal_in(alpha_goal_inSEXP);
+    create_IMABC(N0, Nc, Ngoal, B, target_sd_in, alpha_start_in, alpha_goal_in);
     return R_NilValue;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP _microcancer_create_IMABC() {
+RcppExport SEXP _microcancer_create_IMABC(SEXP N0SEXP, SEXP NcSEXP, SEXP NgoalSEXP, SEXP BSEXP, SEXP target_sd_inSEXP, SEXP alpha_start_inSEXP, SEXP alpha_goal_inSEXP) {
     SEXP rcpp_result_gen;
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_microcancer_create_IMABC_try());
+        rcpp_result_gen = PROTECT(_microcancer_create_IMABC_try(N0SEXP, NcSEXP, NgoalSEXP, BSEXP, target_sd_inSEXP, alpha_start_inSEXP, alpha_goal_inSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {
@@ -42,19 +49,20 @@ RcppExport SEXP _microcancer_create_IMABC() {
     return rcpp_result_gen;
 }
 // check_sim
-std::vector<double> check_sim();
-static SEXP _microcancer_check_sim_try() {
+std::vector<double> check_sim(NumericVector x);
+static SEXP _microcancer_check_sim_try(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    rcpp_result_gen = Rcpp::wrap(check_sim());
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(check_sim(x));
     return rcpp_result_gen;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP _microcancer_check_sim() {
+RcppExport SEXP _microcancer_check_sim(SEXP xSEXP) {
     SEXP rcpp_result_gen;
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_microcancer_check_sim_try());
+        rcpp_result_gen = PROTECT(_microcancer_check_sim_try(xSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {
@@ -74,39 +82,88 @@ RcppExport SEXP _microcancer_check_sim() {
     UNPROTECT(1);
     return rcpp_result_gen;
 }
-// squared_dist_vec
-double squared_dist_vec(std::vector<double> v1, std::vector<double> v2);
-RcppExport SEXP _microcancer_squared_dist_vec(SEXP v1SEXP, SEXP v2SEXP) {
+// create_IMABC_one_node
+void create_IMABC_one_node(int N0, int Nc, int Ngoal, int B, NumericVector target_sd_in, NumericVector alpha_start_in, NumericVector alpha_goal_in);
+static SEXP _microcancer_create_IMABC_one_node_try(SEXP N0SEXP, SEXP NcSEXP, SEXP NgoalSEXP, SEXP BSEXP, SEXP target_sd_inSEXP, SEXP alpha_start_inSEXP, SEXP alpha_goal_inSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<double> >::type v1(v1SEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type v2(v2SEXP);
-    rcpp_result_gen = Rcpp::wrap(squared_dist_vec(v1, v2));
-    return rcpp_result_gen;
-END_RCPP
+    Rcpp::traits::input_parameter< int >::type N0(N0SEXP);
+    Rcpp::traits::input_parameter< int >::type Nc(NcSEXP);
+    Rcpp::traits::input_parameter< int >::type Ngoal(NgoalSEXP);
+    Rcpp::traits::input_parameter< int >::type B(BSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type target_sd_in(target_sd_inSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type alpha_start_in(alpha_start_inSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type alpha_goal_in(alpha_goal_inSEXP);
+    create_IMABC_one_node(N0, Nc, Ngoal, B, target_sd_in, alpha_start_in, alpha_goal_in);
+    return R_NilValue;
+END_RCPP_RETURN_ERROR
 }
-// dmvnrm_arma
-arma::vec dmvnrm_arma(arma::mat x, arma::rowvec mean, arma::mat sigma, bool logd);
-RcppExport SEXP _microcancer_dmvnrm_arma(SEXP xSEXP, SEXP meanSEXP, SEXP sigmaSEXP, SEXP logdSEXP) {
+RcppExport SEXP _microcancer_create_IMABC_one_node(SEXP N0SEXP, SEXP NcSEXP, SEXP NgoalSEXP, SEXP BSEXP, SEXP target_sd_inSEXP, SEXP alpha_start_inSEXP, SEXP alpha_goal_inSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_microcancer_create_IMABC_one_node_try(N0SEXP, NcSEXP, NgoalSEXP, BSEXP, target_sd_inSEXP, alpha_start_inSEXP, alpha_goal_inSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error(CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// check_sim_one_node
+std::vector<double> check_sim_one_node(NumericVector x);
+static SEXP _microcancer_check_sim_one_node_try(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
-    Rcpp::traits::input_parameter< arma::rowvec >::type mean(meanSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type sigma(sigmaSEXP);
-    Rcpp::traits::input_parameter< bool >::type logd(logdSEXP);
-    rcpp_result_gen = Rcpp::wrap(dmvnrm_arma(x, mean, sigma, logd));
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(check_sim_one_node(x));
     return rcpp_result_gen;
-END_RCPP
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _microcancer_check_sim_one_node(SEXP xSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_microcancer_check_sim_one_node_try(xSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error(CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
 }
 
 // validate (ensure exported C++ functions exist before calling them)
 static int _microcancer_RcppExport_validate(const char* sig) { 
     static std::set<std::string> signatures;
     if (signatures.empty()) {
-        signatures.insert("void(*create_IMABC)()");
-        signatures.insert("std::vector<double>(*check_sim)()");
+        signatures.insert("void(*create_IMABC)(int,int,int,int,NumericVector,NumericVector,NumericVector)");
+        signatures.insert("std::vector<double>(*check_sim)(NumericVector)");
+        signatures.insert("void(*create_IMABC_one_node)(int,int,int,int,NumericVector,NumericVector,NumericVector)");
+        signatures.insert("std::vector<double>(*check_sim_one_node)(NumericVector)");
     }
     return signatures.find(sig) != signatures.end();
 }
@@ -115,15 +172,17 @@ static int _microcancer_RcppExport_validate(const char* sig) {
 RcppExport SEXP _microcancer_RcppExport_registerCCallable() { 
     R_RegisterCCallable("microcancer", "_microcancer_create_IMABC", (DL_FUNC)_microcancer_create_IMABC_try);
     R_RegisterCCallable("microcancer", "_microcancer_check_sim", (DL_FUNC)_microcancer_check_sim_try);
+    R_RegisterCCallable("microcancer", "_microcancer_create_IMABC_one_node", (DL_FUNC)_microcancer_create_IMABC_one_node_try);
+    R_RegisterCCallable("microcancer", "_microcancer_check_sim_one_node", (DL_FUNC)_microcancer_check_sim_one_node_try);
     R_RegisterCCallable("microcancer", "_microcancer_RcppExport_validate", (DL_FUNC)_microcancer_RcppExport_validate);
     return R_NilValue;
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_microcancer_create_IMABC", (DL_FUNC) &_microcancer_create_IMABC, 0},
-    {"_microcancer_check_sim", (DL_FUNC) &_microcancer_check_sim, 0},
-    {"_microcancer_squared_dist_vec", (DL_FUNC) &_microcancer_squared_dist_vec, 2},
-    {"_microcancer_dmvnrm_arma", (DL_FUNC) &_microcancer_dmvnrm_arma, 4},
+    {"_microcancer_create_IMABC", (DL_FUNC) &_microcancer_create_IMABC, 7},
+    {"_microcancer_check_sim", (DL_FUNC) &_microcancer_check_sim, 1},
+    {"_microcancer_create_IMABC_one_node", (DL_FUNC) &_microcancer_create_IMABC_one_node, 7},
+    {"_microcancer_check_sim_one_node", (DL_FUNC) &_microcancer_check_sim_one_node, 1},
     {"_microcancer_RcppExport_registerCCallable", (DL_FUNC) &_microcancer_RcppExport_registerCCallable, 0},
     {NULL, NULL, 0}
 };

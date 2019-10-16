@@ -25,17 +25,17 @@ namespace microcancer {
         }
     }
 
-    inline void create_IMABC() {
-        typedef SEXP(*Ptr_create_IMABC)();
+    inline void create_IMABC(int N0, int Nc, int Ngoal, int B, NumericVector target_sd_in, NumericVector alpha_start_in, NumericVector alpha_goal_in) {
+        typedef SEXP(*Ptr_create_IMABC)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr_create_IMABC p_create_IMABC = NULL;
         if (p_create_IMABC == NULL) {
-            validateSignature("void(*create_IMABC)()");
+            validateSignature("void(*create_IMABC)(int,int,int,int,NumericVector,NumericVector,NumericVector)");
             p_create_IMABC = (Ptr_create_IMABC)R_GetCCallable("microcancer", "_microcancer_create_IMABC");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_create_IMABC();
+            rcpp_result_gen = p_create_IMABC(Shield<SEXP>(Rcpp::wrap(N0)), Shield<SEXP>(Rcpp::wrap(Nc)), Shield<SEXP>(Rcpp::wrap(Ngoal)), Shield<SEXP>(Rcpp::wrap(B)), Shield<SEXP>(Rcpp::wrap(target_sd_in)), Shield<SEXP>(Rcpp::wrap(alpha_start_in)), Shield<SEXP>(Rcpp::wrap(alpha_goal_in)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -45,17 +45,58 @@ namespace microcancer {
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
     }
 
-    inline std::vector<double> check_sim() {
-        typedef SEXP(*Ptr_check_sim)();
+    inline std::vector<double> check_sim(NumericVector x) {
+        typedef SEXP(*Ptr_check_sim)(SEXP);
         static Ptr_check_sim p_check_sim = NULL;
         if (p_check_sim == NULL) {
-            validateSignature("std::vector<double>(*check_sim)()");
+            validateSignature("std::vector<double>(*check_sim)(NumericVector)");
             p_check_sim = (Ptr_check_sim)R_GetCCallable("microcancer", "_microcancer_check_sim");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_check_sim();
+            rcpp_result_gen = p_check_sim(Shield<SEXP>(Rcpp::wrap(x)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<std::vector<double> >(rcpp_result_gen);
+    }
+
+    inline void create_IMABC_one_node(int N0, int Nc, int Ngoal, int B, NumericVector target_sd_in, NumericVector alpha_start_in, NumericVector alpha_goal_in) {
+        typedef SEXP(*Ptr_create_IMABC_one_node)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr_create_IMABC_one_node p_create_IMABC_one_node = NULL;
+        if (p_create_IMABC_one_node == NULL) {
+            validateSignature("void(*create_IMABC_one_node)(int,int,int,int,NumericVector,NumericVector,NumericVector)");
+            p_create_IMABC_one_node = (Ptr_create_IMABC_one_node)R_GetCCallable("microcancer", "_microcancer_create_IMABC_one_node");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_create_IMABC_one_node(Shield<SEXP>(Rcpp::wrap(N0)), Shield<SEXP>(Rcpp::wrap(Nc)), Shield<SEXP>(Rcpp::wrap(Ngoal)), Shield<SEXP>(Rcpp::wrap(B)), Shield<SEXP>(Rcpp::wrap(target_sd_in)), Shield<SEXP>(Rcpp::wrap(alpha_start_in)), Shield<SEXP>(Rcpp::wrap(alpha_goal_in)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+    }
+
+    inline std::vector<double> check_sim_one_node(NumericVector x) {
+        typedef SEXP(*Ptr_check_sim_one_node)(SEXP);
+        static Ptr_check_sim_one_node p_check_sim_one_node = NULL;
+        if (p_check_sim_one_node == NULL) {
+            validateSignature("std::vector<double>(*check_sim_one_node)(NumericVector)");
+            p_check_sim_one_node = (Ptr_check_sim_one_node)R_GetCCallable("microcancer", "_microcancer_check_sim_one_node");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_check_sim_one_node(Shield<SEXP>(Rcpp::wrap(x)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
