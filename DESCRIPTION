@@ -17,8 +17,10 @@ LinkingTo:
     Rcpp,
     RcppArmadillo
 Depends: 
-    MASS
+    MASS, 
+    truncnorm
 Imports: 
     Rcpp,
     RcppArmadillo,
-    MASS
+    MASS,
+    truncnorm

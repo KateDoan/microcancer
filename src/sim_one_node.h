@@ -44,13 +44,13 @@ public:
                                 std::map<int, int> &map_other_death){
 
         std::vector<double> num_vec(3*years.size()-6, 0);
-        for(unsigned int i=1; i<years.size()-1; i++){
+        for(unsigned i=1; i<years.size()-1; i++){
             num_vec[i-1] = (map_cancer_incidence[years[i]] - 26388.0)/30386.0;
         }
-        for(unsigned int i=1; i<years.size()-1; i++){
+        for(unsigned i=1; i<years.size()-1; i++){
             num_vec[i+years.size()-3] = (map_cancer_death[years[i]] - 16563.0)/9486.0;
         }
-        for(unsigned int i=1; i<years.size()-1; i++){
+        for(unsigned i=1; i<years.size()-1; i++){
             num_vec[i+2*years.size()-5] = ((double)map_cancer_death[years[i]]/(double)map_other_death[years[i]] - 0.310616)/0.1078237;
         }
         for(auto elem : num_vec){
@@ -95,16 +95,17 @@ public:
         return age_death;
     }
 
-    double gen_age_death_unif(double age_low, double mean, double sd){
+    double gen_truncnorm(double age_low, double mean, double sd){
         double age_death;
-        if(age_low < mean + 2*sd){
-            while(true){
-                age_death = R::rnorm(mean, sd);
-                if(age_death > age_low) break;
-                checkUserInterrupt();
+        int i=0;
+        while(true){
+            age_death = R::rnorm(mean, sd);
+            if(age_death >= age_low) break;
+            if(++i > 200){
+                age_death = age_low;
+                break;
             }
-        } else {
-            age_death = age_low + R::runif(0, 5);
+            checkUserInterrupt();
         }
         return age_death;
     }
@@ -117,20 +118,17 @@ public:
         // parameters
         double mean_death_other = (m1 + (year_in - age_in - 1988) * mt);
 
-        age_death_other = gen_age_death_unif(age_in, mean_death_other, sd_death_other);
+        age_death_other = gen_truncnorm(age_in, mean_death_other, sd_death_other);
 
+        int i_cancer = 0;
         while(true){
-            while(true){
-                age_clinical = R::rnorm(m_clinical, s_clinical);
-                if(age_clinical > 0) break;
-                checkUserInterrupt();
-            }
-            while(true){
-                age_death_cancer = age_clinical + R::rnorm(m_surv_cancer, s_surv_cancer);
-                if(age_death_cancer > age_clinical) break;
-                checkUserInterrupt();
-            }
+            age_clinical = gen_truncnorm(0, m_clinical, s_clinical);
+            age_death_cancer = gen_truncnorm(age_clinical, age_clinical + m_surv_cancer, s_surv_cancer);
             if(age_death_cancer > age_in){
+                break;
+            }
+            if(++i_cancer > 200){
+                age_death_cancer = age_in;
                 break;
             }
             checkUserInterrupt();
@@ -188,8 +186,8 @@ public:
                     row.push_back(word);
                 }
 
-                for(unsigned int r=0; r<5; r++){
-                    for(unsigned int i=0; i<std::stoi(row[2])/5; i++){
+                for(unsigned r=0; r<5; r++){
+                    for(unsigned i=0; i<std::stoi(row[2])/5; i++){
                         schedule_cancer(std::stoi(row[0]) + r, std::stoi(row[1]));
                     }
                 }
@@ -216,8 +214,8 @@ public:
                     row.push_back(word);
                 }
 
-                //for(unsigned int r=0; r<5; r++){
-                for(unsigned int i=0; i<std::stoi(row[2]); i++){
+                //for(unsigned r=0; r<5; r++){
+                for(unsigned i=0; i<std::stoi(row[2]); i++){
                     schedule_cancer(std::stoi(row[0]), std::stoi(row[1]));
                 }
                 //}

@@ -52,9 +52,9 @@ public:
         std::vector<double> params(size_theta);
         double min_p, dist2_to_target;
 
-        for(unsigned int it=0; it<N0; it++){
+        for(unsigned it=0; it<N0; it++){
             /*
-            for(unsigned int i=0; i<size_theta; ++i){
+            for(unsigned i=0; i<size_theta; ++i){
                 params[i] = R::rnorm(3, 1);
             }
             */
@@ -88,7 +88,7 @@ public:
         std::vector<double> curr_sim_res;
         NumericMatrix sig_mat;
         NumericMatrix new_vecs;
-        unsigned int i;
+        unsigned i;
         std::vector<Point>::iterator it, it_copy, it_begin, it_Nc;
 
         Environment mvrnorm_env("package:MASS");
@@ -202,7 +202,7 @@ public:
         arma::mat params_mat(ret.size(), size_theta);
         arma::vec dprior(ret.size());
         std::vector<Point>::iterator it;
-        unsigned int i;
+        unsigned i;
 
         for(it = ret.begin(), i=0; it != ret.end(); it++, i++){
             std::vector<double> curr_params = (*it).params;
@@ -229,7 +229,7 @@ public:
                 int median_idx = int(n_selected_pts/2);
                 std::vector<Point>::iterator it = ret.begin() + median_idx;
                 std::vector<double>pvals_median = (*it).pvals;
-                for(unsigned int i=0; i<alpha_goal.size(); i++){
+                for(unsigned i=0; i<alpha_goal.size(); i++){
                     alpha_vec[i] = std::min(pvals_median[i], alpha_goal[i]);
                 }
                 if(is_trial) Rcout << n_selected_pts << "\n";
@@ -314,9 +314,6 @@ std::vector<double> check_sim_one_node(NumericVector x){
     Sim_one_node s(x(0), x(1), x(2), x(3), x(4), x(5), x(6));
     return s.read_csv_and_schedule_cancer();
 }
-
-
-
 
 
 
