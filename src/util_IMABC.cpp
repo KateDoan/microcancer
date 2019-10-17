@@ -26,7 +26,7 @@ double squared_dist_vec(std::vector<double> v1, std::vector<double> v2){
     double temp = 0.0;
     double squared_sum = 0.0;
 
-    for(unsigned int i=0;i<vsize; i++){
+    for(unsigned i=0;i<vsize; i++){
         squared_sum += (v1[i]-v2[i]) * (v1[i]-v2[i]);
     }
 
@@ -45,7 +45,7 @@ arma::vec dmvnrm_arma(arma::mat x,
     double rootisum = arma::sum(log(rooti.diag()));
     double constants = -(static_cast<double>(xdim)/2.0) * log2pi;
 
-    for (unsigned int i=0; i < n; i++) {
+    for (unsigned i=0; i < n; i++) {
         arma::vec z = rooti * arma::trans( x.row(i) - mean) ;
         out(i)      = constants - 0.5 * arma::sum(z%z) + rootisum;
     }
@@ -97,7 +97,7 @@ std::vector<double> cal_pval_vec(std::vector<double> &obs,
                                  std::vector<double> &target, std::vector<double> &target_sd){
     std::vector<double> pvals(obs.size(), 0);
 
-    for(unsigned int i=0; i<obs.size(); i++){
+    for(unsigned i=0; i<obs.size(); i++){
         pvals[i] = 2*R::pnorm(obs[i], target[i], target_sd[i], (obs[i]<target[i]), false);
     }
 
@@ -105,7 +105,7 @@ std::vector<double> cal_pval_vec(std::vector<double> &obs,
 }
 
 bool is_acceptable(std::vector<double> &pval_vec, std::vector<double> &alpha_vec){
-    for(unsigned int i=0; i<pval_vec.size(); i++){
+    for(unsigned i=0; i<pval_vec.size(); i++){
         if(pval_vec[i] < alpha_vec[i]){
             return false;
         }
@@ -147,23 +147,23 @@ void write_csv_vpoints(const std::vector<Point> &vpoints, std::string file_name,
     std::ofstream myfile;
     myfile.open(file_name);
 
-    for(unsigned int i=0; i<nparams; i++){
+    for(unsigned i=0; i<nparams; i++){
         myfile << "v" << i << ",";
     }
     myfile << "minp,";
     myfile << "dist,";
-    for(unsigned int i=0; i<ntargets; i++){
+    for(unsigned i=0; i<ntargets; i++){
         myfile << "p" << i << ",";
     }
     myfile << "\n";
 
     for(auto it = vpoints.begin(); it != vpoints.end(); it++){
-        for(unsigned int i=0; i<(*it).params.size(); i++){
+        for(unsigned i=0; i<(*it).params.size(); i++){
             myfile << (*it).params[i] << ",";
         }
         myfile << (*it).pval << ",";
         myfile << (*it).dist2_to_target << ",";
-        for(unsigned int i=0; i<(*it).pvals.size(); i++){
+        for(unsigned i=0; i<(*it).pvals.size(); i++){
             myfile << (*it).pvals[i] << ",";
         }
         myfile << "\n";

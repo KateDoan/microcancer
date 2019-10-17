@@ -21,6 +21,16 @@ check_sim_one_node <- function(x) {
     .Call(`_microcancer_check_sim_one_node`, x)
 }
 
+#' @export
+create_IMABC_two_node <- function(N0, Nc, Ngoal, B, target_sd_in, alpha_start_in, alpha_goal_in) {
+    invisible(.Call(`_microcancer_create_IMABC_two_node`, N0, Nc, Ngoal, B, target_sd_in, alpha_start_in, alpha_goal_in))
+}
+
+#' @export
+check_sim_two_node <- function(x) {
+    .Call(`_microcancer_check_sim_two_node`, x)
+}
+
 # Register entry points for exported C++ functions
 methods::setLoadAction(function(ns) {
     .Call('_microcancer_RcppExport_registerCCallable', PACKAGE = 'microcancer')

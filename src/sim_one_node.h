@@ -7,11 +7,11 @@
 #include <fstream>
 using namespace Rcpp;
 
-class Sim_one_node{
+class Sim_one_node {
 public:
     Sim_one_node(double m1, double mt, double sd_death_other,
-        double m_clinical, double s_clinical,
-        double m_surv_cancer, double s_surv_cancer):
+                 double m_clinical, double s_clinical,
+                 double m_surv_cancer, double s_surv_cancer):
     m1(m1), mt(mt), sd_death_other(sd_death_other),
     m_clinical(m_clinical), s_clinical(s_clinical),
     m_surv_cancer(m_surv_cancer), s_surv_cancer(s_surv_cancer) {};
@@ -40,8 +40,8 @@ public:
     }
 
     std::vector<double> concat_map(std::map<int, int> &map_cancer_incidence,
-                                std::map<int, int> &map_cancer_death,
-                                std::map<int, int> &map_other_death){
+                                   std::map<int, int> &map_cancer_death,
+                                   std::map<int, int> &map_other_death){
 
         std::vector<double> num_vec(3*years.size()-6, 0);
         for(unsigned i=1; i<years.size()-1; i++){
@@ -149,15 +149,15 @@ public:
             map_cancer_incidence[find_lower_bound(years, year_clinical)] += 1;
         }
         /*
-         if(year_death < year_in){
-         std::cout << "age_in: " << age_in << " "
-                   << "age_clinical: " << age_clinical << " "
-                   << "age_death_cancer: " << age_death_cancer << " "
-                   << "age_death: " << age_death << "\n"
-                   << "year_clinical: " << year_clinical << " "
-                   << "year_death: " << year_death << "\n";
-         }
-         */
+        if(year_death < year_in){
+        std::cout << "age_in: " << age_in << " "
+                  << "age_clinical: " << age_clinical << " "
+                  << "age_death_cancer: " << age_death_cancer << " "
+                  << "age_death: " << age_death << "\n"
+                  << "year_clinical: " << year_clinical << " "
+                  << "year_death: " << year_death << "\n";
+        }
+        */
     }
 
     std::vector<double> read_csv_and_schedule_cancer(){
@@ -187,7 +187,7 @@ public:
                 }
 
                 for(unsigned r=0; r<5; r++){
-                    for(unsigned i=0; i<std::stoi(row[2])/5; i++){
+                    for(int i=0; i<std::stoi(row[2])/5; i++){
                         schedule_cancer(std::stoi(row[0]) + r, std::stoi(row[1]));
                     }
                 }
@@ -215,7 +215,7 @@ public:
                 }
 
                 //for(unsigned r=0; r<5; r++){
-                for(unsigned i=0; i<std::stoi(row[2]); i++){
+                for(int i=0; i<std::stoi(row[2]); i++){
                     schedule_cancer(std::stoi(row[0]), std::stoi(row[1]));
                 }
                 //}
@@ -244,6 +244,5 @@ public:
 
         double m1, mt, sd_death_other, m_clinical, s_clinical, m_surv_cancer, s_surv_cancer;
 };
-
 
 #endif

@@ -2,7 +2,9 @@
 
 export(check_sim)
 export(check_sim_one_node)
+export(check_sim_two_node)
 export(create_IMABC)
 export(create_IMABC_one_node)
+export(create_IMABC_two_node)
 importFrom(Rcpp,sourceCpp)
 useDynLib(microcancer, .registration = TRUE)

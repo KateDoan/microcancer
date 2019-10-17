@@ -261,7 +261,7 @@ public:
     std::vector<double> target_sd;
     std::vector<double> alpha_vec;
     std::vector<double> alpha_goal;
-    int N0, Nc, Ngoal, B, LIM1, LIM2, LIM3, running_Nt=0, n_selected_pts=0;
+    unsigned N0, Nc, Ngoal, B, LIM1, LIM2, LIM3, running_Nt=0, n_selected_pts=0;
     double ESS = 0.0;
 
     std::vector<Point> ret;
@@ -274,7 +274,7 @@ public:
 
 //' @export
 //[[Rcpp::export]]
-void create_IMABC_one_node(int N0, int Nc, int Ngoal, int B,
+void create_IMABC_one_node(unsigned N0, unsigned Nc, unsigned Ngoal, unsigned B,
                   NumericVector target_sd_in,
                   NumericVector alpha_start_in,
                   NumericVector alpha_goal_in){

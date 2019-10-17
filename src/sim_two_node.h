@@ -1,5 +1,5 @@
-#ifndef SIM_H
-#define SIM_H
+#ifndef SIM_TWO_NODE_H
+#define SIM_TWO_NODE_H
 
 // [[Rcpp::depends("RcppArmadillo")]]
 #include <RcppArmadillo.h>
@@ -7,18 +7,16 @@
 #include <fstream>
 using namespace Rcpp;
 
-class Sim{
+class Sim_two_node {
 public:
-    Sim(double m1, double mt, double sd_death_other,
-        double lm_precursor, double ls_precursor,
-        double lam_preclinical, double p_preclinical,
-        double lm_clinical, double ls_clinical,
-        double lm_surv_cancer, double ls_surv_cancer):
+    Sim_two_node(double m1, double mt, double sd_death_other,
+                 double m_clinical1, double s_clinical1,
+                 double m_clinical2, double s_clinical2,
+                 double m_surv_cancer, double s_surv_cancer):
     m1(m1), mt(mt), sd_death_other(sd_death_other),
-    lm_precursor(lm_precursor), ls_precursor(ls_precursor),
-    lam_preclinical(lam_preclinical),p_preclinical(p_preclinical),
-    lm_clinical(lm_clinical), ls_clinical(ls_clinical),
-    lm_surv_cancer(lm_surv_cancer), ls_surv_cancer(ls_surv_cancer) {};
+    m_clinical1(m_clinical1), s_clinical1(s_clinical1),
+    m_clinical2(m_clinical2), s_clinical2(s_clinical2),
+    m_surv_cancer(m_surv_cancer), s_surv_cancer(s_surv_cancer) {};
 
     void initialize_maps(){
         for(auto year : years){
@@ -44,8 +42,8 @@ public:
     }
 
     std::vector<double> concat_map(std::map<int, int> &map_cancer_incidence,
-                                std::map<int, int> &map_cancer_death,
-                                std::map<int, int> &map_other_death){
+                                   std::map<int, int> &map_cancer_death,
+                                   std::map<int, int> &map_other_death){
 
         std::vector<double> num_vec(3*years.size()-6, 0);
         for(unsigned i=1; i<years.size()-1; i++){
@@ -115,7 +113,10 @@ public:
     }
 
     void schedule_cancer(double age_in, int year_in){
-        double age_precursor, age_preclinical, age_clinical, age_death_other, age_death_cancer, age_death;
+        double age_death_other,
+               age_clinical1, age_clinical2, age_clinical,
+               age_death_cancer1, age_death_cancer2, age_death_cancer,
+               age_death;
         int year_clinical = 9999, year_death = 9999;
         std::vector<double> res;
 
@@ -124,24 +125,36 @@ public:
 
         age_death_other = gen_truncnorm(age_in, mean_death_other, sd_death_other);
 
-        int i_cancer = 0;
+        int i_cancer1 = 0;
         while(true){
-            age_precursor = R::rlnorm(lm_precursor, ls_precursor);
-            if(R::runif(0,1) < p_preclinical){
-                age_preclinical = age_precursor + R::rexp(lam_preclinical);
-            } else {
-                age_preclinical = age_death_other + 1;
-            }
-            age_clinical = age_preclinical + R::rlnorm(lm_clinical, ls_clinical);
-            age_death_cancer = age_clinical + R::rlnorm(lm_surv_cancer, ls_surv_cancer);
-            if(age_death_cancer > age_in){
+            age_clinical1 = gen_truncnorm(0, m_clinical1, s_clinical1);
+            age_death_cancer1 = gen_truncnorm(age_clinical1, age_clinical1 + m_surv_cancer, s_surv_cancer);
+            if(age_death_cancer1 > age_in){
                 break;
             }
-            if(++i_cancer > 200){
-                age_death_cancer = age_in;
+            if(++i_cancer1 > 200){
+                age_death_cancer1 = age_in;
                 break;
             }
+            checkUserInterrupt();
         }
+
+        int i_cancer2 = 0;
+        while(true){
+            age_clinical2 = gen_truncnorm(0, m_clinical2, s_clinical2);
+            age_death_cancer2 = gen_truncnorm(age_clinical2, age_clinical2 + m_surv_cancer, s_surv_cancer);
+            if(age_death_cancer2 > age_in){
+                break;
+            }
+            if(++i_cancer2 > 200){
+                age_death_cancer2 = age_in;
+                break;
+            }
+            checkUserInterrupt();
+        }
+
+        age_clinical = std::min(age_clinical1, age_clinical2);
+        age_death_cancer = std::min(age_death_cancer1, age_death_cancer2);
 
         if(age_death_cancer < age_death_other){
             age_death = age_death_cancer;
@@ -159,7 +172,7 @@ public:
         }
         /*
         if(year_death < year_in){
-            Rcout << "age_in: " << age_in << " "
+        std::cout << "age_in: " << age_in << " "
                   << "age_clinical: " << age_clinical << " "
                   << "age_death_cancer: " << age_death_cancer << " "
                   << "age_death: " << age_death << "\n"
@@ -223,7 +236,7 @@ public:
                     row.push_back(word);
                 }
 
-                //for(int r=0; r<5; r++){
+                //for(unsigned r=0; r<5; r++){
                 for(int i=0; i<std::stoi(row[2]); i++){
                     schedule_cancer(std::stoi(row[0]), std::stoi(row[1]));
                 }
@@ -251,8 +264,9 @@ public:
         std::map<int, int> map_other_death;
         std::vector<int> years = {0, 1988, 1993, 1998, 2003, 2008, 2013};
 
-        double m1, mt, sd_death_other,lm_precursor, ls_precursor,lam_preclinical, p_preclinical, lm_clinical, ls_clinical, lm_surv_cancer, ls_surv_cancer;
+        double m1, mt, sd_death_other,
+                m_clinical1, s_clinical1, m_clinical2, s_clinical2,
+                m_surv_cancer, s_surv_cancer;
 };
-
 
 #endif
