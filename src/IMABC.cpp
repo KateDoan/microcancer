@@ -53,15 +53,10 @@ public:
 
     void step1(){
         std::vector<Point>().swap(ret);
-        std::vector<double> params(size_theta);
-        double min_p, dist2_to_target;
-
         for(int it=0; it<N0; it++){
-            /*
-            for(unsigned i=0; i<size_theta; ++i){
-                params[i] = R::rnorm(3, 1);
-            }
-            */
+            std::vector<double> params(size_theta);
+            double min_p, dist2_to_target;
+
             params[0] = R::runif(70, 80);
             params[1] = R::runif(0, 3);
             params[2] = R::runif(5, 20);
@@ -236,6 +231,7 @@ public:
 
     void IMABC_main(){
         step1();
+        write_csv_vpoints(ret, "myparams" + std::to_string(save_i++) + ".csv", size_theta, target.size());
 
         while(alpha_vec < alpha_goal){
             if(n_selected_pts > LIM3 * size_theta){
@@ -327,8 +323,6 @@ std::vector<double> check_sim(NumericVector x){
     Sim s(x(0), x(1), x(2), x(3), x(4), x(5), x(6), x(7), x(8), x(9), x(10));
     return s.read_csv_and_schedule_cancer();
 }
-
-
 
 
 

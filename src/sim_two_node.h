@@ -103,8 +103,8 @@ public:
         while(true){
             age_death = R::rnorm(mean, sd);
             if(age_death >= age_low) break;
-            if(++i > 200){
-                age_death = age_low;
+            if(age_low > mean && ++i > 5){
+                age_death = age_low + R::runif(0, 5);
                 break;
             }
             checkUserInterrupt();
@@ -132,8 +132,8 @@ public:
             if(age_death_cancer1 > age_in){
                 break;
             }
-            if(++i_cancer1 > 200){
-                age_death_cancer1 = age_in;
+            if(++i_cancer1 > 10){
+                age_death_cancer1 = age_in + R::runif(0, 5);
                 break;
             }
             checkUserInterrupt();

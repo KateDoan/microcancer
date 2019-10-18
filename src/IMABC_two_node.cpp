@@ -229,6 +229,7 @@ public:
 
     void IMABC_main(){
         step1();
+        write_csv_vpoints(ret, "myparamstwonode" + std::to_string(save_i++) + ".csv", size_theta, target.size());
 
         while(alpha_vec < alpha_goal){
             if(n_selected_pts > LIM3 * size_theta){
