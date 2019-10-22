@@ -57,11 +57,12 @@ public:
         for(unsigned i=1; i<years.size()-1; i++){
             num_vec[i+2*years.size()-5] = ((double)map_cancer_death[years[i]]/(double)map_other_death[years[i]] - 0.310616)/0.1078237;
         }
+        /*
         for(auto elem : num_vec){
             Rcout << elem << " ";
         }
         Rcout << "\n";
-
+        */
         return num_vec;
     }
 
@@ -157,7 +158,7 @@ public:
             year_clinical = cal_year(age_in, year_in, age_clinical);
             map_cancer_incidence[find_lower_bound(years, year_clinical)] += 1;
         }
-        /*
+
         if(year_death < year_in){
             Rcout << "age_in: " << age_in << " "
                   << "age_clinical: " << age_clinical << " "
@@ -166,7 +167,7 @@ public:
                   << "year_clinical: " << year_clinical << " "
                   << "year_death: " << year_death << "\n";
         }
-        */
+
     }
 
     std::vector<double> read_csv_and_schedule_cancer(){
